@@ -140,7 +140,7 @@ ppp_maryland_loans %>%
   arrange(desc(count_loans))
 ```
 Which county has the most loans?  Put your answer in the space below.
-**Answer**
+**Answer** Montgomery
 
 ### Task 8
 **Task** Run the following codeblock to group the ppp_maryland_loans dataframe by county and race, then count the number of loans in that group, and then sort from A-Z by county and then by race.
