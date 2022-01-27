@@ -34,5 +34,22 @@ library(tidyverse)
 ```
 
 
+### Summarizing
 
+I need to use group_by and summariz. Here's an example of grouping by county and calculating counts, sum and other descriptive statistics.
+
+
+```{r}
+ppp_maryland_loans %>%
+  group_by(project_county_name) %>%
+  summarise(
+    count_loans = n(),
+    total_loans_amount = sum(amount),
+    mean_loan_amount = mean(amount),
+    median_loan_amount = median(amount),
+    min_loan_amount = min(amount),
+    max_loan_amount = max(amount)
+  ) %>%
+  arrange(desc(max_loan_amount))
+```
 
