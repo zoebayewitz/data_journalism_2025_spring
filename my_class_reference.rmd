@@ -16,10 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-print("Hello!")
+print("Hello puppy!")
 ```
-
-
 
 ## Introduction
 
@@ -40,19 +38,9 @@ install.packages("tidyverse")
 library(tidyverse)
 ```
 
-### How to read a CSV file
-
-The function to use here is called `read_csv` and we pass it either a file path or a URL.
+### How to read in a CSV file from the Internet
 
 ```{r}
 wes_moore_contributions <- read_csv("https://raw.githubusercontent.com/stephenneukam/CNS_Annapolis/main/Campaign_finance/Moore_ContributionsList.csv")
 ```
-
-
-
-
-
-
-
-
 
