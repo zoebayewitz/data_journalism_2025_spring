@@ -57,7 +57,7 @@ number * number
 
 What does it return? Type your answer below:
 
-**Answer:**
+**Answer:** [1] 4
 
 ### Task 3: Install packages
 
@@ -95,7 +95,7 @@ umd_courses <- read_rds("umd_courses.rds")
 
 Once it loads, look at the environment window at right in RStudio for umd_courses It's next to a small blue circle with a white arrow in it. To the right of that, look at how many "obs" the dataset has ("obs" is short for observation, which is another way of saying rows or records). Look at how many variables it has (another way of saying columns or fields). Write the number of observations and variables below.
 
-**Answer** 55,632 rows
+**Answer**
 
 ### Task 6: Glimpse data
 
@@ -106,7 +106,7 @@ glimpse(umd_courses)
 ```
 
 In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). 
-**Answer** 
+**Answer**
 
 ### Task 7: Examine data "head"
 
@@ -126,14 +126,13 @@ In the space below, write the name of the course from the first row of the "titl
 ### Task 9: Group and count
 
 
-
 **Task** Run the following codeblock:
 
 ```{r}
 umd_courses %>%
   group_by(term) %>%
-  summarise(
-    count_classes = n()
+  summarize(
+    number_of_courses = n()
   )
 ```
 
@@ -146,12 +145,7 @@ Describe what you think each line of this code is doing below, based on the resu
 **Task** Run the following codeblock:
 
 ```{r}
-umd_courses %>%
-  group_by(term) %>%
-  summarise(
-    count_classes = n()
-  ) %>%
-  arrange(count_classes)
+umd_courses %>% group_by(term) %>% summarise(count_classes = n()) %>% arrange(desc(count_classes))
 ```
 
 Compared to the previous codeblock, what has changed and how did that affect the result? 
@@ -167,7 +161,7 @@ umd_courses %>%
   summarise(
     count_classes = n()
   ) %>%
-  arrange(desc(count_classes))
+  arrange(term, desc(count_classes))
 ```
 
 Compared to the previous codeblock, how did the output change and what in the code changed it?
