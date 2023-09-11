@@ -28,13 +28,13 @@ Consider this a personal guide to the commands and functions you will learn. In 
 The command to set a working directory is setwd(). For example:
 
 ```{r}
-setwd("~/code/data_journalism_2023_spring")
+setwd("~/jour472/data_journalism_2023_fall")
 ```
 
 ### How to install and load the tidyverse
 
 ```{r}
-install.packages("tidyverse")
+#install.packages("tidyverse")
 library(tidyverse)
 ```
 
@@ -53,5 +53,3 @@ dataframe %>%
   group_by(some_column) %>% 
   summarize(count = n())
 ```
-
-
