@@ -15,41 +15,21 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
-print("Hello puppy!")
-```
-
 ## Introduction
 
 Consider this a personal guide to the commands and functions you will learn. In general, when you come across an R command or function that you want to remember, put it in here along with a description of what it does and when you'd use it.
 
 ### How to set the working directory
 
-The command to set a working directory is setwd(). For example:
+The command to set a working directory is setwd(). For example, this sets the working directory to a directory called data_journalism_2024_fall inside a directory called jour472 located inside your home directory (the ~ is equivalent of /Users/[youruser] on a Mac).
 
 ```{r}
-setwd("~/jour472/data_journalism_2023_fall")
+setwd("~/jour472/data_journalism_2024_fall")
 ```
 
 ### How to install and load the tidyverse
 
 ```{r}
-#install.packages("tidyverse")
+install.packages("tidyverse")
 library(tidyverse)
-```
-
-### How to read in a CSV file from the Internet
-
-```{r}
-wes_moore_contributions <- read_csv("https://raw.githubusercontent.com/stephenneukam/CNS_Annapolis/main/Campaign_finance/Moore_ContributionsList.csv")
-```
-
-### How to count rows
-
-You use the `n()` function to count rows, like so:
-
-```{r}
-dataframe %>% 
-  group_by(some_column) %>% 
-  summarize(count = n())
 ```
