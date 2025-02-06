@@ -1,0 +1,139 @@
+---
+title: "lab_01"
+author: "Ryan Little"
+date: "2025-02-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Turn off scientific notation
+options(scipen=999)
+```
+
+## About this lab
+
+To complete this lab, you need to: \* run existing code as directed (look for **Task**). \* modify existing code as directed (look for **Task**). \* write code in empty codeblocks provided to answer questions included (look for **Q**). \* write out the answer in the form of a complete sentence in the space given (look for **A**). When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+
+Remember to add any new verbs or concepts to your reference notebook!
+
+## Load libraries and establish settings
+
+**Task** Import the Tidyverse. Write the code needed to load the library. To run the codeblock, hit the little green play button in the upper right corner of the gray area (the codeblock) below.
+
+```{r}
+
+```
+
+## Load Data
+
+In this lab, we will be recreating the first data story I ever did as a data journalism student at Merrill while working in the Howard Center for Investigative Journalism. First, we need to import the court charges data from Okaloosa County, Florida.
+
+**Task** Using the example from the pre_lab, write code to load the CSV file in the data file and assign it to a good variable name. This data is only charges for homeless people.
+
+```{r}
+homeless_people <- read_csv("data/okaloosa-court-charges.csv")
+```
+## Examine the data
+
+**Task** Run the codeblock below to use glimpse to get a sense of the column names, types and sample data.
+
+**Q1** How many rows and columns does this dataframe have?
+
+**A1** 15,386 rows, 56 columns
+
+```{r}
+glimpse(homeless_people)
+```
+
+## Answer questions
+
+**Q2** Which charges are homeless people most often charged with?
+
+**A2**narcotic equip possess or use
+
+```{r}
+homeless_people |>
+  group_by(court_statute) |>
+  summarise(
+    count_prosecutor_charge_count = n()
+  ) |>
+  arrange(desc(count_prosecutor_charge_count))
+```
+
+**Q3** What charges against homeless people have been charged the least?
+
+**A3**
+
+```{r}
+homeless_people |>
+  group_by(court_statute) |>
+  summarise(
+    count_prosecutor_charge_count = n()
+  ) |>
+  arrange(count_prosecutor_charge_count)
+```
+
+**Q4** Why do you think there are so many charges identified in **A3** that are tied for the least common? Hint: You can't answer this question with code.
+
+**A4** Prosecutors may use ultra-specific charges to jail homeless people for any type and number of crimes to get them off of the street.
+
+**Q5** Which prosecutor has prosecuted the most charges against homeless people? Is the top prosecutor related to any famous Floridians?
+
+**A5**ginger bowden madden; she's the daughter of Bobby Bowden
+
+```{r}
+homeless_people |>
+  group_by(prosecutor) |>
+  summarise(count_prosecutor_charge_count
+     = n()) |>
+  arrange(desc(count_prosecutor_charge_count))
+```
+
+
+**Q6** Which judge has overseen the most cases involving homeless people? Hint: Cases and charges are not the same thing.
+
+**A6**patricia s grinsted
+
+```{r}
+homeless_people |>
+  group_by(judge) |>
+  summarise(total_assessed
+     = n()) |>
+  arrange(desc(total_assessed))
+```
+
+**Q7** What prosecutor has prosecuted the most cases against a single homeless person?
+
+**A7**ginger bowden madden against zardale ward
+
+```{r}
+homeless_people |>
+  group_by(prosecutor) |>
+  summarise(
+    count_prosecutor_charge_count = n(),
+      max_defendant = max(defendant)
+     ) |>
+  arrange(desc(count_prosecutor_charge_count))
+```
+
+**Q8** We need to create a dataframe that will help us when we are reporting on the ground. Building off our work so far, we need a dataframe that includes the name of every homeless person who was charged with a crime and some important counts about their interactions with the criminal justice system. Create a dataframe that includes the name of each homeless person, the number of charges they have faced, the number of cases they have been involved in, how many dollars they have been assessed in fines, the average fine imposed on them and the median fine imposed upon them. Then sort the data frame so the person with the most charges is at the top. 
+
+**A8**
+
+```{r}
+homeless_people |>
+  group_by(defendant) |>
+  summarise (
+    count_prosecutor_charge_count = n(),
+    cases = n_distinct(case_number),
+    total_total_assessed = sum(total_assessed),
+   mean_total_assessed = mean(total_assessed),
+   median_total_assessed = median(total_assessed),
+  ) |>
+  arrange(desc(count_prosecutor_charge_count))
+```
+
+**Q9** Please describe a short reporting plan for how you would use the data you have generated in **A8** to report on the criminal justice system in Okaloosa County, Florida. Who are the people we should talk to? What more should we do with our data analysis to be certain we know what the story is?
+
+**A9**We should talk to the prosecutors with the most cases prosecuted, the top judges who have prosecuted, the media specialist at Fort Walton Beach PD, and if findable, homeless people who have been charged. We should compare this data against housed people, seeing if they're charged any more or less for same or different crimes. 
