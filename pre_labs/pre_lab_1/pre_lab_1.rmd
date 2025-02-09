@@ -34,7 +34,7 @@ The library function loads an R library such as the tidyverse, providing access 
 
 ### Task 1: The console
 
-**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer:**
+**Task** In the console (look below), type 2+2 and hit enter. What does it return? Type your answer below. **Answer: [1]4**
 
 ### Task 2: Variables
 
@@ -54,7 +54,7 @@ What does it return? Type your answer below:
 
 NOTE: **Answer: Type your answer inside the asterisks like this.** 
 
-**Answer:**
+**Answer:[1] 4**
 
 ### Task 3: Load libraries
 
@@ -78,7 +78,7 @@ umd_courses <- read_rds("data/umd_courses.rds")
 
 Once it loads, look at the environment window at right in RStudio for umd_courses It's next to a small blue circle with a white arrow in it. To the right of that, look at how many "obs" the dataset has ("obs" is short for observation, which is another way of saying rows or records). Look at how many variables it has (another way of saying columns or fields). Write the number of observations and variables below.
 
-**Answer**
+**Answer: 79366 observations, 9 variables**
 
 ### Task 6: Glimpse data
 
@@ -88,7 +88,7 @@ Once it loads, look at the environment window at right in RStudio for umd_course
 glimpse(umd_courses)
 ```
 
-In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). **Answer**
+In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>). **Answer: the id column is <chr>, the seats column is <dbl>**
 
 ### Task 7: Examine data "head"
 
@@ -98,7 +98,7 @@ In the space below, write the data type for the "id" column and the "seats" colu
 head(umd_courses)
 ```
 
-In the space below, write the name of the business from the first row of the "name" column. **Answer**
+In the space below, write the name of the business from the first row of the "name" column. **Answer: LING889**
 
 ### Task 8: Explore data with interactive dataframe
 
@@ -122,7 +122,7 @@ umd_courses |>
 
 Describe what you think each line of this code is doing below, based on the result:
 
-**Answer**
+**Answer: I think the term column is representing different semesters in numbers and the count classes is giving the number of classes offered in that term  **
 
 ### Task 10: Adding arrange to sort the data
 
@@ -137,7 +137,7 @@ umd_courses |>
   arrange(desc(count_classes))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? **Answer: we added "desc", which sorted the data by descending class size**
 
 ### Task 11: Grouping by multiple columns
 
@@ -154,7 +154,7 @@ umd_courses |>
 
 Compared to the previous codeblock, how did the output change and what in the code changed it?
 
-**Answer**
+**Answer: the department name was added by adding "department" to the "group by" function**
 
 ### Task 12: Other summary functions
 
@@ -170,7 +170,7 @@ umd_courses |>
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? **Answer: the total number of seats was added in the "arrange" function**
 
 ### Task 13: different kinds of summarizations
 
@@ -188,7 +188,7 @@ umd_courses |>
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? **Answer: the mean and medium of seats were added, which integrated that math into the data. the top terms all end in "08".**
 
 ### Task 14: more aggregations
 
@@ -210,7 +210,7 @@ umd_courses |>
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted?
 
-**Answer**
+**Answer: now, minimum and maximum seats were added and the data is sorted by department, which makes it easier to read in my opinion**
 
 ### Task 12: Questions
 
@@ -218,8 +218,8 @@ No code here; I want you to provide three questions that this data suggests to y
 
 **Answer**
 
-1.  
+1.  What do the numbers for terms represent? There seems to be more than 3 (fall, spring, winter)
 
-2.  
+2.  Why do the number of classes and seats not align? Is this due to the type of class?
 
-3.  
+3.  Are all of these majors? What classifies a "department"?

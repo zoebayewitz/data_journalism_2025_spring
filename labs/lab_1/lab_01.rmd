@@ -128,8 +128,8 @@ homeless_people |>
     count_prosecutor_charge_count = n(),
     cases = n_distinct(case_number),
     total_total_assessed = sum(total_assessed),
-   mean_total_assessed = mean(total_assessed),
-   median_total_assessed = median(total_assessed),
+    mean_total_assessed = mean(total_assessed),
+    median_total_assessed = median(total_assessed),
   ) |>
   arrange(desc(count_prosecutor_charge_count))
 ```
