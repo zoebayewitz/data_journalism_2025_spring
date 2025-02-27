@@ -217,6 +217,9 @@ conowingo
 cleaned_conowingo <- conowingo |>
   clean_names()
 
+new_dataframe <- existing_dataframe |>
+  clean_names()
+
 # display the cleaned dataset
 cleaned_conowingo
 ```
