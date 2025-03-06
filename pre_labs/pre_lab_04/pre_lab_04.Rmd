@@ -59,7 +59,7 @@ dc_food
 # The filter function in the codeblock below says: look in the city column, and pluck out any value that starts with (the "^" symbol means "starts with") a lowercase "w" OR (the vertical "|", called a pipe, means OR) an uppercase "W". 
 
 dc_food |>
-  group_by(recipient_name) |>
+  group_by(recipient_name, city) |>
   summarise(
     count=n()
   ) |>
@@ -86,11 +86,11 @@ cleaned_dc_food
 
 ```{r}
 cleaned_dc_food |>
-  group_by(recipient_name, recipient_clean) |>
+  group_by(recipient_name, recipient_clean, city) |>
   summarise(
     count=n()
   ) |>
-  filter(str_detect(recipient_clean, "^w|^W")) |>
+  filter(str_detect(city, "^w|^W")) |>
   arrange(recipient_clean)
 ```
 
@@ -101,7 +101,7 @@ cleaned_dc_food |>
 ```{r}
 cleaned_dc_food <- dc_food |>
   mutate(recipient_clean=n_gram_merge(recipient_name)) |>
-  select(recipient_name, recipient_clean, everything)
+  select(recipient_name, recipient_clean, everything())
 
 cleaned_dc_food |>
   group_by(city, city_clean) |>
