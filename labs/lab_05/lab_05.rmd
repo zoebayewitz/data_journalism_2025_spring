@@ -1,0 +1,97 @@
+---
+title: "lab_05"
+author: "derek willis"
+date: "2024-09-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries and establish settings
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+## Getting Started
+
+This week we'll be combining and joining data to make it more useful and to ask some questions about it. This week, we'll revisit our new Maryland voters data and try to join it with contributions to the Harris campaign from Maryland donors made via ActBlue. Can we find new voters who are not registered Democrats who gave to Harris after she became a presidential candidate on July 21? What, if anything, can we say about those people?
+
+We'll be doing something similar to what Ence Morse did for [this Washington Post story](https://www.washingtonpost.com/politics/2024/09/24/kamala-harris-younger-donors/?pwapi_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZWFzb24iOiJnaWZ0IiwibmJmIjoxNzI3MzIzMjAwLCJpc3MiOiJzdWJzY3JpcHRpb25zIiwiZXhwIjoxNzI4NzA1NTk5LCJpYXQiOjE3MjczMjMyMDAsImp0aSI6ImIwYWMxNTk4LWMwMDgtNDE5Ny04MjAyLWVmMWNjZWFmYWZiMiIsInVybCI6Imh0dHBzOi8vd3d3Lndhc2hpbmd0b25wb3N0LmNvbS9wb2xpdGljcy8yMDI0LzA5LzI0L2thbWFsYS1oYXJyaXMteW91bmdlci1kb25vcnMvIn0.3-s0tBkMV7Y9DD21CBsKMlaliGlOKT2egCO-UFT735Y), just on a smaller scale.
+
+First, load two CSV contribution files in the `data` folder, one each for donations made in July and August, and then combine them into a single dataframe.
+
+```{r}
+july_harris <- read_csv("data/july_harris.csv")
+august_harris <- read_csv("data/august_harris.csv")
+harris <- bind_rows(list(july_harris, august_harris))
+
+```
+
+Next, let's read in the new voters (people who registered in 2024):
+
+```{r}
+new_voters <- read_csv("data/new_voters.csv")
+```
+
+Next join the Harris donations to the voter data. Remember, people's names are common, __so you'll want to use name columns and address information__. You'll need to figure out which columns to use from both dataframes. The new_voters data has both a single Address column and various parts of the address, such as HouseNumber. Make a plan for picking your join columns - try out some combinations - and save the results to a new dataframe.
+
+```{r}
+combined <- harris|>
+  inner_join(new_voters, join_by(
+        "address_one" == "Address",
+        "last_name" == "LastName",
+        "first_name" == "FirstName",
+        "city" == "ResidentialCity"
+          )) 
+
+
+```
+
+## Answer questions
+
+Q1. Explain why you used the columns you did to make the join, and why that result is better than other ways you tried. Are there any problems with the join you made, such as the possibility of false positives?
+
+A1. These columns are the best because they're the most unique identifiable names with the least likelihood for same values. I highly doubt there are any rows with duplicates, but there is a possibility.
+
+Q2. Based on your join, how many donations to Harris have come from people who registered this year? How many unique people does that represent, and which donors have given the largest _number_ of donations since July 20? 
+
+A2. 326, 77, Brandyn Best
+
+```{r}
+combined |>
+  filter (StateRegistrationDate >as.Date ("2024-07-20")) |>
+  summarise (number=n())
+```
+
+
+```{r}
+combined |>
+  group_by(CountyRegistrationDate, StateRegistrationDate, last_name, first_name, amount) |>
+  summarise(count=n()) |>
+  filter (CountyRegistrationDate >as.Date("2024-07-20")) |>
+  arrange(desc(count))
+```
+
+Q3. What are the party and gender breakdowns of those donors? How many donations has Harris gotten from non-Democrats?
+
+A3. 173 females, 141 men; 32 donations from non-Democrats
+
+```{r}
+combined |>
+  group_by(Gender, Party) |>
+  summarise(count=n()) 
+```
+
+Q4. Choose your own adventure: I want you to come up with a question you could ask of one of the dataframes we've created for this lab. It could involve just the new voters, or the donors or the joined dataframe, but it cannot be a variation of a previous question (so, for example, you can't ask, "How many Republicans have given to Harris"). First write the question and then try to answer it by writing code. If you're not sure of the exact code, try googling (or ask me for advice) but, at a minimum, describe what you think you'd have to do to answer it and what the results would look like. That can help.
+
+A4: How many voters that registered this year are from Silver Spring? 39 voters.
+```{r}
+combined |>
+  group_by (city) |>
+  summarise(count=n())
+```
+
