@@ -1,0 +1,31 @@
+---
+title: "Reverse Engineering Project"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+congress_ages <- read_csv("data/data_aging_congress.csv")
+
+glimpse(congress_ages)
+```
+Median age (in years) of individuals in Congress
+
+```{r}
+congress_ages |>
+  summarize(median_age = median(age_years, na.rm=TRUE))
+```
+```{r}
+congress_ages |>
+  filter(chamber == "Senate") |>
+  summarize(median_senate_age= median(age_years, na.rm=TRUE))
+```
+```{r}
+congress_ages |>
+  filter(chamber == "House") |>
+  summarize(median_senate_age= median(age_years, na.rm=TRUE))
+```
+
