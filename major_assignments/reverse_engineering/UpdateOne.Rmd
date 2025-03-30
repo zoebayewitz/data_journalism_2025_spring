@@ -29,3 +29,42 @@ congress_ages |>
   summarize(median_senate_age= median(age_years, na.rm=TRUE))
 ```
 
+```{r}
+current_boomers <- congress_ages |>
+  filter(congress=="118") |>
+  group_by(congress, generation) |>
+  summarize (
+    total = n(),
+    boomers = sum(generation == "Boomers"), 
+    .groups = "drop") |>
+  mutate(
+    total_all_generations = sum(total),
+    percent_boomers = ((boomers / total_all_generations) * 100)) |>
+print(current_boomers)
+```
+
+```{r}
+current_boomers <- congress_ages |>
+  filter(congress=="113") |>
+  group_by(congress, generation) |>
+  summarize (
+    total = n(),
+    boomers = sum(generation == "Boomers"), 
+    .groups = "drop") |>
+  mutate(
+    total_all_generations = sum(total),
+    percent_boomers = ((boomers / total_all_generations) * 100)) |>
+print(current_boomers)
+```
+
+```{r}
+generation_ages <- congress_ages |>
+  filter(generation %in% c("Boomers", "Silent") & congress %in% c(96, 107, 118))
+
+age_by_generation <- generation_ages |>
+  group_by(generation, congress) |>
+  summarize(median_age = median(age_years, na.rm = TRUE), .groups = "drop")
+
+age_by_generation
+```
+
