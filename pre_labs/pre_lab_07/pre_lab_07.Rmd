@@ -232,4 +232,4 @@ md_zips_with_acs <- top_zips |> left_join(md_zipcodes, join_by(zip5==GEOID))
 md_zips_with_acs <- md_zips_with_acs |> mutate(min=(estimate-moe), max=(estimate+moe))
 ```
 
-**Task** Arrange md_zips_with_acs by estimate showing the highest median household income first. What questions do you have about these top zip codes? **Answer: What is the demographic makeup of these areas, who did they tend to vote for, has their voting participation increased/decreased in the past few years**
+**Task** Arrange md_zips_with_acs by estimate showing the highest median household income first. What questions do you have about these top zip codes? **Answer: What is the demographic makeup of these areas, who did they tend to vote for, has their voting participation increased/decreased  in the past few years**
