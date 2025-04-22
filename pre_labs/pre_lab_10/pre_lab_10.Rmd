@@ -193,7 +193,7 @@ Now we can join the precincts to the turnout data.
 
 ### Task: Run code to join the precinct shapes with the voter turnout data
 
-**Task** Run the following code. Describe the output in the space below. **Answer: **
+**Task** Run the following code. Describe the output in the space below. **Answer: the data shows PG locations that served as voting sites, the congressional districting of those places, and its geographical spacial information**
 
 ```{r}
 pg_precincts_with_turnout <- pg_precincts |> left_join(pg_turnout, by=c("PRECINCT_ID"="precinct"))
@@ -205,7 +205,7 @@ Now we can use color to distinguish precincts from each other. Let's use the tot
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: it's the pg county precincts, color coordinated by eligible voters**
 
 ```{r}
 ggplot() +
@@ -239,7 +239,7 @@ We've got voters by county, so let's load that from the data folder and take a l
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: it's the totals of all types of voters, by party affiliation, in each MD county**
 
 ```{r}
 voters_by_county <- read_csv("data/eligible_voters.csv")
@@ -253,7 +253,7 @@ Next, we'll go out and get population data for each county from tidycensus. The 
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: the estimated population of every MD county.**
 
 ```{r}
 md_county_population <- get_acs(geography = "county",
@@ -267,7 +267,7 @@ Ultimately, we're going to join this county population table with our voters by 
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: MD counties with their geometric information.**
 
 ```{r}
 md_county_population <- get_acs(geography = "county",
@@ -287,7 +287,7 @@ But there's a problem. The column in our population data that has county names i
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: a combination of the last codes, with each MD county, the number of voters in each party, and the total amount of people in each party.**
 
 ```{r}
 md_county_population
@@ -301,7 +301,7 @@ Let's clean the population table. We're going to rename the "NAME" column to "Co
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: each MD county with their population and geometric shape.**
 
 ```{r}
 md_county_population <- md_county_population |>
@@ -318,7 +318,7 @@ Now we can join them.
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: each MD county, its population, amount of people in each party, and its geometry.**
 
 ```{r}
 md_voters_per_10k <- md_county_population |>
@@ -331,19 +331,21 @@ Hang on - there's at least one county with NA values - St. Mary's, which is spel
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: each MD county with their population and geometry.**
 
 ```{r}
 md_county_population <- md_county_population |>
   mutate(County = if_else(County == "St. Mary's", "Saint Mary's", County)) |> 
   mutate(County = if_else(County == "Baltimore", "Baltimore County", County))
+
+md_county_population
 ```
 
 Our final step before visualization, let's calculate the number of voters per 10,000 population for each county and sort from highest to lowest to see what trends we can identify just from the table.
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: each MD county with their total population, voters per party, and voters per capita**
 
 ```{r}
 md_voters_per_10k <- md_county_population |>
@@ -360,7 +362,7 @@ Okay, now let's visualize. We're going to build a choropleth map, with the color
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: a map of MD with number of voters per capita**
 
 ```{r}
 ggplot() +
@@ -372,7 +374,7 @@ This map is okay, but the color scale makes it hard to draw fine-grained differe
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: the same as the last one, but with more interesting coloring**
 
 ```{r}
 ggplot() +
@@ -387,7 +389,7 @@ So let's change the color scale to a "log" scale, which will help us see those d
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. What regional patterns do you see? **Answer**
+**Task** Run the following code. Describe the output in the space below. What regional patterns do you see? **Answer: I don't see much of a difference here. The areas closer to DC tend to be more politically active, while the eastern shore counties are less involved.**
 
 ```{r}
 ggplot() +
@@ -400,18 +402,20 @@ Let's repeat that for Unaffiliated voters:
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. **Answer**
+**Task** Run the following code. Describe the output in the space below. **Answer: the amount of unaffiliated voters in each county**
 
 ```{r}
 md_voters_per_10k <- md_voters_per_10k |> 
   mutate(una_voters_per_10k = UNA/population*10000)
+
+md_voters_per_10k
 ```
 
 And then map it:
 
 ### Task: Run code
 
-**Task** Run the following code. Describe the output in the space below. What regional patterns do you see, especially on the ends of the scale? **Answer**
+**Task** Run the following code. Describe the output in the space below. What regional patterns do you see, especially on the ends of the scale? **Answer: lots of urban areas are unaffiliated, while more rural/suburban areas are affiliated**
 
 ```{r}
 ggplot() +
