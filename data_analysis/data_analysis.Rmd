@@ -1,0 +1,23 @@
+---
+title: "Data Analysis"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+install.packages("readr")   # Only needed once
+library(readr)          
+```
+
+```{r}
+independent_expenditure <- read.csv("data/independent_expenditure_2024.csv")
+```
+
+```{r}
+independent_expenditure |>
+  clean_names()
+```
+
+There are 23 columns and 72,971 rows. This data represents all of the independent expenditure spending by candidates/committees from 2023-2024. The sheer amount of data might be limiting because there could be errors in the data. It also accounts for all types of races, so to compare certain types of expenditures would require a lot of filtering. Our questions might be hard to answer in terms of finding average spending because of the amount of data. Additionally, comparing geographical spending compared to other years will be hard because the dataset lacks geographical information.
+We're gonna need to turn the dates numerical to analyze them better. There also seems to be spelling errors after we ran clean names. We'll need to find definitions for the candidate ID, spe_id, can_office_dis, sup_opp, pur, amndt_ind, and image_num. The FEC has a github which gives many descriptions, so we'll need to input those definitions to make the data clearer.
