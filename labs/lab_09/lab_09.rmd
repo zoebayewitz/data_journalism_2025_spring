@@ -92,7 +92,7 @@ Then export each dataframe using `write_csv` and make two (2) choropleth maps in
 
 Compare the two maps. What do you think are the most interesting story ideas in both, and what would you want to know more about? Put the answer below along with the URLs of your maps.
 
-**A3. https://www.datawrapper.de/_/YfT59/ I'm very interested in what pushed donations in the zip codes with the high per capita rates. These seem to be random from the offset, but clearly there's a reason for high donations, ** 
+**A3. https://www.datawrapper.de/_/YfT59/, https://www.datawrapper.de/_/KKoZs/ I'm very interested in what pushed donations in the zip codes with the high per capita rates. These seem to be random from the offset, but clearly there's a reason for high donations, with several high rates on the Eastern Shore.** 
 
 ```{r}
 actblue <- read_csv("data/md_actblue_zip_totals.csv")
@@ -122,3 +122,4 @@ per_capita_winred <- combined_winred |>
 
 write_csv(per_capita_actblue, "data/per_capita_actblue.csv")
 write_csv(per_capita_winred, "data/per_capita_winred.csv")
+```
