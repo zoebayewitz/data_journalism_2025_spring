@@ -1,0 +1,137 @@
+---
+title: "lab_11"
+author: "Derek Willis"
+date: "2024-11-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## You will need
+
+-   Our usual libraries for working with data, including dates and column names, plus rvest.
+
+## Load libraries and establish settings
+
+**Task** Create a codeblock and load appropriate packages and settings for this lab.
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(rvest)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(lubridate)
+```
+
+Let's get to scraping. We'll be working on collecting information about Maryland election results, and then we'll grab some congressional press releases. For Maryland races, we'll focus on Board of Education races using this CNS story as a guide: <https://cnsmaryland.org/2024/11/08/md-conservatives-make-gains-in-school-board-races/>. You should read it.
+
+## Questions
+
+**Q1**. Write code to scrape the table of unofficial results from Frederick County's Board of Education races (<https://elections.maryland.gov/elections/2024/general_Results/gen_results_2024_by_county_11.html>), producing a dataframe that contains the results of that race for each candidate and removing the total. You'll need to identify which table on the page contains the BOE results. All numbers should actually be numbers, including the percentage. Then make a bar chart of the results, noting that the top 3 candidates win.
+
+**A1: Used ChatGPT for reading in html link and tables.**
+
+```{r}
+fred_url <- "https://elections.maryland.gov/elections/2024/general_Results/gen_results_2024_by_county_11.html"
+
+fred_results <- read_html(fred_url) |>
+  html_table() |>
+  pluck(9)|>
+  clean_names()|>
+  mutate(across(c(early_voting, election_day, mail_in_ballot, provisional),
+  ~ as.numeric(str_remove_all(., ",")))) |>
+  mutate(percentage = as.numeric(str_remove(percentage, "%"))) |>
+  select(-total) |>
+  slice(-c(7,9))
+
+ggplot(fred_results, aes(x = reorder(name, percentage), y=percentage)) + 
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "2024 Frederick County Board of Elections Results" ,
+    x = "Candidate" ,
+    y = "Vote Percentage" ,
+    caption = "The top three candidates win the election") +
+    theme_light()
+
+```
+
+**Q2** Next, let's scrape the list of press releases from Maryland's Office of the State Prosecutor, <https://osp.maryland.gov/category/press-releases/>. This isn't a table, so you'll need to use `html_elements()` and your browser's inspector and do some clean up on the results. The result should be a dataframe with three columns: title, url and date. HINT: you can extract the date from the title using lubridate OR you can use the `separate` function.
+
+You should have 10 releases when finished, not 20.
+
+Then, write code that finds the most recent release with the word "Campaign" in the title. What election does it refer to?
+
+**A2: Used ChatGPT for tibble function. It is referring to a recent scandal after the 2024 election. ((not sure about this one))**
+
+```{r}
+url <- "https://osp.maryland.gov/category/press-releases/" |>
+  read_html()
+
+articles <- url|>
+  html_element("article")
+
+pr_data <- tibble (
+  title = articles |>
+    html_element("h2 a") |>
+    html_text(trim = TRUE),
+  url = articles |>
+    html_element("h2 a") |>
+    html_attr("href") ,
+  date = articles |>
+    html_element("time") |>
+    html_text(trim = TRUE))
+
+pr_data <- pr_data |>
+  slice_head(n = 10)
+  
+pr_data |>
+  filter(str_detect(str_to_title(title), "campaign")) |>
+  arrange(desc(date))
+
+pr_data
+```
+
+**Q3** Sen. Ben Cardin, D-Maryland, has posted hundreds of press releases at <https://www.cardin.senate.gov/?post_type=press-releases>. It would be great to have all of them in a dataframe that has the following columns: date, title and url.
+
+To do this, you will need to scrape the page's html and save that to a variable, and *then* extract the dates, titles and urls into *separate* dataframes using html_elements(). We turn a list into a dataframe using `as_tibble()`.
+
+At the end, you'll have three dataframes that you want to combine into a single dataframe. When we want to combine the rows of identical dataframes, we used `bind_rows()`. If you were combining columns instead of rows, there's a similar function. Use it to put all of the dataframes together into a single one. You are combining columns, not rows.
+
+When you're done, rename the columns so they make sense, then make sure the date column is an actual date.
+
+Finally, tell me what questions you could ask of this data, and what other information about it would be useful to have. Be creative.
+
+**A3: The link here stopped working when I came back to it so I'm not able to see how the columns look. A question that could be asked of this data is when does Senator Cardin tend to release press releases? Is it closer to elections or during general periods? What issues are written about the most in press releases?**
+
+```{r}
+url <- "https://www.cardin.senate.gov/?post_type=press-releases" |>
+  read_html(url)
+
+dates <- url |>
+  html_elements("h5") |>
+  html_text() |>
+  as_tibble(dates)
+
+titles <- url |>
+  html_elements("h3") |>
+  html_text() |>
+  as_tibble(titles)
+
+urls <- url |>
+  html_elements("h3 a") |>
+  html_attr("href") |>
+  as_tibble(urls)
+  
+press_data <- bind_cols(dates, titles, urls)
+
+press_data <- press_data |>
+  rename (
+    date = value_1 ,
+    title = value_2 ,
+    urls = value_3)
+```
