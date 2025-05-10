@@ -1,23 +1,187 @@
 ---
-title: "Data Analysis"
+title: "data analysis"
 output: html_notebook
 ---
 
 ```{r}
 library(tidyverse)
+library(lubridate)
+library(refinr)
+library(dplyr)
 library(janitor)
-install.packages("readr")   # Only needed once
-library(readr)          
+```
+
+
+```{r}
+independent_expenditures <- read_csv("data/independent_expenditure_2024_clean.csv")
 ```
 
 ```{r}
-independent_expenditure <- read.csv("data/independent_expenditure_2024.csv")
-```
-
-```{r}
-independent_expenditure |>
-  clean_names()
+clean_expenditures <- independent_expenditures |>
+  clean_names() |>
+  rename(
+    candidate_id = cand_id,
+    candidate_name = cand_name,
+    spender_id = spe_id,
+    spender_name = spe_nam,
+    election_type = ele_type,
+    candidate_state = can_office_state,
+    candidate_district = can_office_dis,
+    candidate_office = can_office,
+    candidate_party = cand_pty_aff,
+    expenditure_amount = exp_amo,
+    expenditure_date = exp_date,
+    aggregate_amount = agg_amo,
+    support_or_oppose = sup_opp,
+    purpose = pur,
+    payee = pay,
+    file_number = file_num,
+    amendment_indicator = amndt_ind,
+    transaction_id = tran_id,
+    image_number = image_num,
+    receipt_date = receipt_dat,
+    election_year = fec_election_yr,
+    previous_file_number = prev_file_num,
+    dissemination_date = dissem_dt
+  )
 ```
 
 There are 23 columns and 72,971 rows. This data represents all of the independent expenditure spending by candidates/committees from 2023-2024. The sheer amount of data might be limiting because there could be errors in the data. It also accounts for all types of races, so to compare certain types of expenditures would require a lot of filtering. Our questions might be hard to answer in terms of finding average spending because of the amount of data. Additionally, comparing geographical spending compared to other years will be hard because the dataset lacks geographical information.
-We're gonna need to turn the dates numerical to analyze them better. There also seems to be spelling errors after we ran clean names. We'll need to find definitions for the candidate ID, spe_id, can_office_dis, sup_opp, pur, amndt_ind, and image_num. The FEC has a github which gives many descriptions, so we'll need to input those definitions to make the data clearer.
+
+Question 1: Which presidential candidates have spent the most during their campaign? Who has spent the least?
+
+ANSWER: Jon Tester has the most, eight candidates are tied for the least.
+
+```{r}
+clean_expenditures |>
+  group_by(candidate_name) |>
+  summarise(total = sum(expenditure_amount, na.rm = TRUE)) |>
+  arrange(desc(total))
+```
+
+Question 2: How are Republicans and Democrats spending their money differently? What are each party’s top spending points?
+
+ANSWER: Democrats spent a lot of money on television ads, radio and media production. Republicans spent a lot of money on data harvesting. The Democrats top spending point was PLACED MEDIA: TV. The Republicans top spending point was Data Harvesting.
+
+```{r}
+clean_expenditures |>
+  group_by(candidate_party, expenditure_amount, purpose) |>
+  summarise(total = sum(expenditure_amount, na.rm = TRUE)) |>
+  arrange(desc(total))
+```
+
+```{r}
+clean_expenditures <- read_csv("data/updated_cleaned.csv")
+```
+
+
+Question 3: Which candidates receive the most independent support versus opposition, and how does spending differ between supporting and attacking candidates?
+
+ANSWER: Jon Tester received the most independent support versus opposition. Democrats tend to spend more money on elections and their campaigns compared to Republicans.
+
+```{r}
+summary <- clean_expenditures |>
+  filter(!is.na(candidate_name), support_or_oppose %in% c("S", "O")) |>
+  group_by(candidate_name, support_or_oppose) |>
+  summarise(total_spent = sum(expenditure_amount, na.rm = TRUE), .groups = "drop")
+
+top_supported <- summary |>
+  filter(support_or_oppose == "S")|>
+  arrange(desc(total_spent)) |>
+  head(5)
+
+top_opposed <- summary |>
+  filter(support_or_oppose == "O") |>
+  arrange(desc(total_spent)) |>
+  head(5)
+
+purpose_comparison <- clean_expenditures |>
+  filter(!is.na(purpose), support_or_oppose %in% c("S", "O")) |>
+  group_by(support_or_oppose, purpose) |>
+  summarise(total_spent = sum(expenditure_amount, na.rm = TRUE), .groups = "drop") |>
+  arrange(desc(total_spent))
+
+```
+
+```{r}
+clean_2020 <- read_csv("data/cleaned_2020_expenditures.csv")
+```
+
+
+Question 4: What PACs donated both in 2020 and 2024?
+
+ANSWER: There are 17 PACs that donated both in 2020 and 2024. They are: 
+- American Crossroads
+- Americans for Constitutional Liberty dba The Conservative Caucus
+- End Citizens United
+- Gun Rights America
+- Indivisible Action
+- MONTANA HUNTERS AND ANGLERS LEADERSHIP FUND
+- MORE JOBS, LESS GOVERNMENT
+- March On PAC
+- Montana Rural Voters (WORC)
+- NEA Advocacy Fund
+- National Association of Realtors Political Action Committee
+- Our Future United
+- PROTECT OUR WINTERS ACTION FUND
+- Planned Parenthood Votes
+- SEIU COPE (Service Employees International Union Committee On Political Education)
+- Senate Leadership Fund
+- Working America
+
+```{r}
+clean_2020 <- clean_2020 |>
+  clean_names() |>
+  rename(
+    candidate_id = cand_id,
+    candidate_name = cand_name,
+    spender_id = spe_id,
+    spender_name = spe_nam,
+    election_type = ele_type,
+    candidate_state = can_office_state,
+    candidate_district = can_office_dis,
+    candidate_office = can_office,
+    candidate_party = cand_pty_aff,
+    expenditure_amount = exp_amo,
+    expenditure_date = exp_date,
+    aggregate_amount = agg_amo,
+    support_or_oppose = sup_opp,
+    purpose = pur,
+    payee = pay,
+    file_number = file_num,
+    amendment_indicator = amndt_ind,
+    transaction_id = tran_id,
+    image_number = image_num,
+    receipt_date = receipt_dat,
+    election_year = fec_election_yr,
+    previous_file_number = prev_file_num,
+    dissemination_date = dissem_dt
+  )
+```
+```{r}
+spenders_2020 <- clean_2020 |>
+  select(spender_name) |>
+  distinct()
+
+spenders_2024 <- clean_expenditures |>
+  select(spender_name) |>
+  distinct()
+
+common_spenders <- inner_join(spenders_2020, spenders_2024, by = "spender_name")
+
+common_spenders
+```
+
+
+Question 5: How are Republicans and Democrats spending their money differently? What are each party’s top spending points? 
+
+ANSWER: Democrats spent a lot of money on television ads, radio and media production. Republicans spent a lot of money on data harvesting. The Democrats top spending point was PLACED MEDIA: TV. The Republicans top spending point was Data Harvesting.
+
+
+```{r}
+clean_expenditures |>
+  group_by(candidate_party, expenditure_amount, purpose) |>
+  summarise(total = sum(expenditure_amount, na.rm = TRUE)) |>
+  arrange(desc(total))
+```
+
